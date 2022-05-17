@@ -12,7 +12,7 @@ services:
 
   redmine:
     build: ./
-    image: mtilson/redmine:5.0.0-1
+    image: mtilson/redmine:5.0.1
     depends_on:
     - postgresql
     environment:
