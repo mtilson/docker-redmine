@@ -1,16 +1,16 @@
 name: Build and Publish
 
-on:
-  push:
-    branches:
-      - master
-      - '*.*-stable'
-    tags:
-      - '*.*.*'
-  pull_request:
-  workflow_dispatch:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
+#       - '*.*-stable'
+#     tags:
+#       - '*.*.*'
+#   pull_request:
+#   workflow_dispatch:
+#     branches:
+#       - master
 
 jobs:
   build-and-push-docker-image:
