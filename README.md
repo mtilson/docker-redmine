@@ -6,6 +6,8 @@
   - [Changelog](Changelog.md)
 - [Quick Start](#quick-start)
   - [Launch Redmine application](#launch-redmine-application)
+  - [Backup Redmine application data](#backup-redmine-application-data)
+  - [Restore Redmine application data from backup](#restore-redmine-application-data-from-backup)
 - [Configuration](#configuration)
   - [Data Store](#data-store)
   - [Database](#database)
