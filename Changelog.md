@@ -1,5 +1,15 @@
 # Changelog
 
+**5.0.1-1**
+- Change the order the value of DB_PASS Env variable is derermined, to avoid messing up with POSTGRES_PASSWORD
+- Switch to docker hub repo 'mtilson/redmine' (for all docker-compose-*.yml where image of 5.x.x version is used)
+- Update README
+
+**5.0.1**
+- redmine: upgrade to v5.0.1
+- Temporarily disable github workflows
+- Switch to docker hub repo 'mtilson/redmine' (for base docker-compose.yml only)
+
 **5.0.0-1**
 - Add docker-compose-memcached.yml example
 - Switch cache_store from dalli_store to mem_cache_store, issue [#501](https://github.com/sameersbn/docker-redmine/issues/501)
