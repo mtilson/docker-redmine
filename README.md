@@ -79,16 +79,21 @@ Dockerfile to build a [Redmine](http://www.redmine.org/) container image
 
 ```bash
 cat > init-user-db.sh <<'EOF_'
-#!/bin/bash
+#!/usr/bin/env sh
 set -e
 
-echo "Creating database user: ${DB_USER}"
-if [[ -z $(psql -U ${POSTGRES_USER} -Atc "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '${DB_USER}'";) ]]; then
+test -z "${DEBUG:-}" || {
+  echo "=== [$0] dbg: run 'env | sort'"
+  env | sort
+}
+
+echo "=== [$0] log: creating database user of DB_USER: '${DB_USER}'"
+if test -z "$(psql -U ${POSTGRES_USER} -Atc "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '${DB_USER}'";)" ; then
   psql -U ${POSTGRES_USER} -c "CREATE ROLE \"${DB_USER}\" with LOGIN CREATEDB PASSWORD '${DB_PASS}';" >/dev/null
 fi
 
-echo "Creating database: ${DB_NAME}"
-if [[ -z $(psql -U ${POSTGRES_USER} -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '${DB_NAME}'";) ]]; then
+echo "=== [$0] log: creating database of DB_NAME: '${DB_NAME}'"
+if test -z "$(psql -U ${POSTGRES_USER} -Atc "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '${DB_NAME}'";)" ; then
   psql -U ${POSTGRES_USER} -c "CREATE DATABASE \"${DB_NAME}\";" >/dev/null
   psql -U ${POSTGRES_USER} -c "GRANT ALL PRIVILEGES ON DATABASE \"${DB_NAME}\" to \"${DB_USER}\";" >/dev/null
 fi
