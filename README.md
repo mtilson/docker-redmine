@@ -102,7 +102,7 @@ chmod +x init-user-db.sh
 
 * The [latest 12 version of Debian varian](https://github.com/docker-library/postgres/blob/e8ebf74e50128123a8d0220b85e357ef2d73a7ec/12/bullseye/Dockerfile) of [official PostgreSQL Docker image](https://hub.docker.com/_/postgres) is used as an example
   * **TODO:** Usage of other PostgreSQL Docker images (13, 14, Debian/Alpine variants) to be verified
-* The created above file (`init-user-db.sh`) is mounted as *initialization script* which is run before starting the DB service
+* The created above file (`init-user-db.sh`) is mounted as *initialization script* which is run before starting the DB service, if container's data directory (defined by `PGDATA` Env variable and set to `/var/lib/postgresql/data` by default) is empty
 * Details on the other used volume see below in [Configuration](#configuration) section
 * The specified Env variables (`DB_NAME`, `DB_USER`, `DB_PASS`) should be provided to define Redmine application `DB name`, `DB user`, and `DB password` respectively
 * The specified Env variable `POSTGRES_PASSWORD` is required for the PostgreSQL image
@@ -123,7 +123,8 @@ docker run \
 ### Launch *Redmine container*
 
 * The specified version of [Redmine application Docker image](https://hub.docker.com/r/mtilson/redmine) is used
-* The application is published on `localhost` port `8080`
+* The application is published on `localhost` and port defined by Env variable `PORT`, which is default `8080`
+  * Export this Env variable (for example like `export PORT=80`) to have the applicaton listening on port `80` 
 * Details on the used volumes see below in [Configuration](#configuration) section
 * The specified Env variables for SMTP are for the simple non-authentication SMTP configuration, details are in [Configuration](#configuration) section
 * The *linking* of the application container (*Redmine*) to the pre-launched before DB container (*PostgreSQL*) provides fulfilling of the application to DB communication requirements:
@@ -143,7 +144,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine:/home/redmine/data \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
-  --publish=8080:80 \
+  --publish=${PORT:-8080}:80 \
   -d mtilson/redmine:5.0.2
 ```
 
@@ -195,7 +196,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine:/home/redmine/data \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
-  --publish=8080:80 \
+  --publish=${PORT:-8080}:80 \
   -d mtilson/redmine:5.0.2
 ```
 
@@ -238,7 +239,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine:/home/redmine/data \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
-  --publish=8080:80 \
+  --publish=${PORT:-8080}:80 \
   -d mtilson/redmine:5.0.2
 ```
 
