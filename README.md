@@ -11,10 +11,6 @@
 - [Configuration](#configuration)
   - [Data Store](#data-store)
   - [Database](#database)
-    - [MySQL](#mysql)
-      - [Internal MySQL Server](#internal-mysql-server)
-      - [External MySQL Server](#external-mysql-server)
-      - [Linking to MySQL Container](#linking-to-mysql-container)
     - [PostgreSQL](#postgresql)
       - [External PostgreSQL Server](#external-postgresql-server)
       - [Linking to PostgreSQL Container](#linking-to-postgresql-container)
@@ -980,7 +976,7 @@ docker exec -it redmine bash
 * Commands to run to update image to next redmine release, examples are from 5.0.1 to 5.0.1-1
 
 ```bash
-sed -i 's/5.0.1/5.0.1-1/g' VERSION README.md docker-compose-memcached.yml docker-compose-mysql.yml docker-compose-ssl.yml docker-compose-sqlite3.yml docker-compose-mariadb.yml Dockerfile docker-compose.yml
+sed -i 's/5.0.1/5.0.1-1/g' VERSION README.md docker-compose-memcached.yml docker-compose-ssl.yml docker-compose-sqlite3.yml docker-compose-mariadb.yml Dockerfile docker-compose.yml
 vim Changelog.md # Update change log
 sudo rm -rf /srv/docker/redmine/ # Clean old run
 docker-compose down
