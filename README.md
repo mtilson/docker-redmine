@@ -51,7 +51,7 @@
 
 # Introduction
 
-Dockerfile to build a [Redmine](http://www.redmine.org/) container image
+Docker image for [Redmine](http://www.redmine.org/) 
 
 ## Note
 
