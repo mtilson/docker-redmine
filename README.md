@@ -119,7 +119,7 @@ docker run \
   --env='DB_USER=redmine' \
   --env='DB_PASS=password' \
   --env='POSTGRES_PASSWORD=super-password' \
-  --volume /srv/docker/redmine/postgresql:/var/lib/postgresql \
+  --volume /srv/docker/redmine/postgresql:/var/lib/postgresql/data \
   --volume "$(pwd)"/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh \
   -d postgres:12
 ```
@@ -445,7 +445,7 @@ docker run --name=postgresql-redmine -d \
   --env='DB_NAME=redmine_production' \
   --env='DB_USER=redmine' \
   --env='DB_PASS=password' \
-  --volume=/srv/docker/redmine/postgresql:/var/lib/postgresql \
+  --volume=/srv/docker/redmine/postgresql:/var/lib/postgresql/data \
   sameersbn/postgresql:9.6-4
 ```
 
