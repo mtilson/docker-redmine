@@ -1,5 +1,11 @@
 # Changelog
 
+**5.0.2**
+- redmine: upgrade to v5.0.2
+- Add debugging environment to init-user-db
+- Update README: fix mount point for PGDATA - it is /var/lib/postgresql/data by default
+- Update README: remove mysql reference
+
 **5.0.1-1**
 - Change the order the value of DB_PASS Env variable is derermined, to avoid messing up with POSTGRES_PASSWORD
 - Switch to docker hub repo 'mtilson/redmine' (for all docker-compose-*.yml where image of 5.x.x version is used)

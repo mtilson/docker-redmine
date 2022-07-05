@@ -3,7 +3,7 @@ version: '2'
 services:
   redmine:
     build: ./
-    image: mtilson/redmine:5.0.1-1
+    image: mtilson/redmine:5.0.2
     environment:
     - TZ=Asia/Kolkata
 
