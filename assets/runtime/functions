@@ -521,6 +521,14 @@ redmine_configure_minimagick_font() {
     REDMINE_MINIMAGICK_FONT_PATH
 }
 
+redmine_configure_ldap() {
+  echo "Configuring redmine::ldap..."
+  update_template ${REDMINE_CONFIG} \
+    REDMINE_LDAP_OTF_USE_DISPLAY_NAME \
+    REDMINE_LDAP_OTF_MAIL_ATTR \
+    REDMINE_LDAP_OTF_MAIL_DOMAIN
+}
+
 backup_dump_database() {
   eval $(parse_yaml "${REDMINE_CONFIG}" config_)
   eval $(parse_yaml "${REDMINE_DATABASE_CONFIG}" database_)
@@ -853,6 +861,7 @@ configure_redmine() {
   redmine_configure_fetch_commits
   redmine_configure_backups
   redmine_configure_minimagick_font
+  redmine_configure_ldap
 
   # configure secure-cookie if using SSL/TLS
   if [[ ${REDMINE_HTTPS} == true ]]; then

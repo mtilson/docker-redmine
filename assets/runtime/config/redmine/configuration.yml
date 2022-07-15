@@ -239,9 +239,45 @@ default:
   # false: switches to default common mark where two or more spaces are required
   # common_mark_enable_hardbreaks: true
 
-  # Path to store backups (docker-redmine only)
+  ### Configuration options for 'docker-redmine' only ### BEGIN
+
+  # Path to store backups and backups expiry period
   backup_storage_path: {{REDMINE_BACKUPS_DIR}}
   backup_expiry: {{REDMINE_BACKUP_EXPIRY}}
+
+  # LDAP on-the-fly: flag to use 'displayName' as default for firstname/lastname
+  #  (default: true)
+  #
+  # If this value is 'true' and the LDAP search request based on
+  #  'attr_firstname' read from web UI via 'LDAP authentication' ->
+  #  <Configured Authentication mode> -> 'Attributes' -> 'Firstname attribute'
+  #  returns empty, then use 'displayName' and its .split(' ')[0] part
+  # If this value is 'true' and the LDAP search request based on
+  #  'attr_lastname' read from web UI via 'LDAP authentication' ->
+  #  <Configured Authentication mode> -> 'Attributes' -> 'Lastname attribute'
+  #  returns empty, then use 'displayName' and its .split(' ')[-1] part
+  ldap_onthefly_use_display_name: {{REDMINE_LDAP_OTF_USE_DISPLAY_NAME}}
+
+  # LDAP on-the-fly: e-mail default attribute (default: 'userPrincipalName')
+  #
+  # If the LDAP search request based on 'attr_mail' read from web UI via
+  #   'LDAP authentication' -> <Configured Authentication mode> ->
+  #   'Attributes' -> 'Email attribute' returns empty, then try to use
+  #   this LDAP attribute if it is not empty
+  ldap_onthefly_mail_default_attr: {{REDMINE_LDAP_OTF_MAIL_ATTR}}
+
+  # LDAP on-the-fly: e-mail domain suffix (default is empty)
+  #
+  # If the returned by the above 'ldap_onthefly_mail_default_attr'
+  # attribute value doesn't corresponds to valid e-mail address, follow
+  # this logic:
+  #   1) If the returned value contains '@some.domain.tld' then replace
+  #      it with this value if it is not empry
+  #   2) If the returned value doesn't contain '@' then add this value
+  #      (if it is not empty) as domain suffix to the returned value
+  ldap_onthefly_mail_domain_suffix: {{REDMINE_LDAP_OTF_MAIL_DOMAIN}}
+
+  ### Configuration options for 'docker-redmine' only ### END
 
 # specific configuration options for production environment
 # that overrides the default ones

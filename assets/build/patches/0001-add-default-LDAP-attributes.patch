@@ -1,0 +1,64 @@
+From 10b51dca58598c17bbe14a71dd168ee474e0935c Mon Sep 17 00:00:00 2001
+From: mtilson <m@tilson.biz>
+Date: Thu, 14 Jul 2022 13:38:42 -0500
+Subject: [PATCH] add default LDAP attributes
+
+---
+ app/models/auth_source_ldap.rb | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
+
+diff --git a/app/models/auth_source_ldap.rb b/app/models/auth_source_ldap.rb
+index 5c87686..2883f3c 100644
+--- a/app/models/auth_source_ldap.rb
++++ b/app/models/auth_source_ldap.rb
+@@ -99,7 +99,7 @@ class AuthSourceLdap < AuthSource
+     ldap_con = initialize_ldap_con(self.account, self.account_password)
+     ldap_con.search(:base => self.base_dn,
+                     :filter => search_filter,
+-                    :attributes => ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail],
++                    :attributes => ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail, 'userPrincipalName', 'displayName'],
+                     :size => 10) do |entry|
+       attrs = get_user_attributes_from_ldap_entry(entry)
+       attrs[:login] = AuthSourceLdap.get_attr(entry, self.attr_login)
+@@ -193,11 +193,26 @@ class AuthSourceLdap < AuthSource
+   end
+ 
+   def get_user_attributes_from_ldap_entry(entry)
++    mail = AuthSourceLdap.get_attr(entry, self.attr_mail)
++    if mail.nil? || mail.empty?
++      mail = AuthSourceLdap.get_attr(entry, 'userPrincipalName') + ".by"
++    end
++
++    firstname = AuthSourceLdap.get_attr(entry, self.attr_firstname)
++    if firstname.nil? || firstname.empty?
++      firstname = AuthSourceLdap.get_attr(entry, 'displayName').split(' ')[0]
++    end
++
++    lastname = AuthSourceLdap.get_attr(entry, self.attr_lastname)
++    if lastname.nil? || lastname.empty?
++      lastname = AuthSourceLdap.get_attr(entry, 'displayName').split(' ')[1]
++    end
++
+     {
+       :dn => entry.dn,
+-      :firstname => AuthSourceLdap.get_attr(entry, self.attr_firstname),
+-      :lastname => AuthSourceLdap.get_attr(entry, self.attr_lastname),
+-      :mail => AuthSourceLdap.get_attr(entry, self.attr_mail),
++      :firstname => firstname,
++      :lastname => lastname,
++      :mail => mail,
+       :auth_source_id => self.id
+     }
+   end
+@@ -206,7 +221,7 @@ class AuthSourceLdap < AuthSource
+   # include the user attributes if on-the-fly registration is enabled
+   def search_attributes
+     if onthefly_register?
+-      ['dn', self.attr_firstname, self.attr_lastname, self.attr_mail]
++      ['dn', self.attr_firstname, self.attr_lastname, self.attr_mail, 'userPrincipalName', 'displayName']
+     else
+       ['dn']
+     end
+-- 
+2.30.2
+

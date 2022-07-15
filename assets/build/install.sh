@@ -45,6 +45,14 @@ else
   exec_as_redmine rm -rf /tmp/redmine-${REDMINE_VERSION}.tar.gz
 fi
 
+# patch redmine source code
+#   '${REDMINE_BUILD_ASSETS_DIR}/patches' contains patch files
+#   '${REDMINE_INSTALL_DIR}' contains source code
+cd ${REDMINE_INSTALL_DIR}
+for i in ${REDMINE_BUILD_ASSETS_DIR}/patches/*.patch; do
+  exec_as_redmine patch -p1 < $i
+done
+
 # HACK: we want both the pg and mysql2 gems installed, so we remove the
 #       respective lines and add them at the end of the Gemfile so that they
 #       are both installed.

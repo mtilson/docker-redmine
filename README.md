@@ -124,7 +124,7 @@ docker run \
 
 * The specified version of [Redmine application Docker image](https://hub.docker.com/r/mtilson/redmine) is used
 * The application is published on `localhost` and port defined by Env variable `PORT`, which is default `8080`
-  * Export this Env variable, for example like `export PORT=80`, to have the applicaton listening on port `80` 
+  * Export this Env variable, for example like `export PORT=80`, to have the applicaton listening on port `80`
 * Details on the used volumes see below in [Configuration](#configuration) section
 * The specified Env variables for SMTP are for the simple non-authentication SMTP configuration, details are in [Configuration](#configuration) section
 * The *linking* of the application container (*Redmine*) to the pre-launched before DB container (*PostgreSQL*) provides fulfilling of the application to DB communication requirements:
