@@ -1,14 +1,14 @@
-From 10b51dca58598c17bbe14a71dd168ee474e0935c Mon Sep 17 00:00:00 2001
+From b386020709a851663b1da296ab9aa3566e64a36b Mon Sep 17 00:00:00 2001
 From: mtilson <m@tilson.biz>
-Date: Thu, 14 Jul 2022 13:38:42 -0500
-Subject: [PATCH] add default LDAP attributes
+Date: Fri, 15 Jul 2022 09:36:15 -0500
+Subject: [PATCH] default LDAP attributes
 
 ---
- app/models/auth_source_ldap.rb | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ app/models/auth_source_ldap.rb | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
 
 diff --git a/app/models/auth_source_ldap.rb b/app/models/auth_source_ldap.rb
-index 5c87686..2883f3c 100644
+index 5c87686..9e2cf01 100644
 --- a/app/models/auth_source_ldap.rb
 +++ b/app/models/auth_source_ldap.rb
 @@ -99,7 +99,7 @@ class AuthSourceLdap < AuthSource
@@ -16,7 +16,7 @@ index 5c87686..2883f3c 100644
      ldap_con.search(:base => self.base_dn,
                      :filter => search_filter,
 -                    :attributes => ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail],
-+                    :attributes => ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail, 'userPrincipalName', 'displayName'],
++                    :attributes => search_attributes_all,
                      :size => 10) do |entry|
        attrs = get_user_attributes_from_ldap_entry(entry)
        attrs[:login] = AuthSourceLdap.get_attr(entry, self.attr_login)
@@ -50,15 +50,33 @@ index 5c87686..2883f3c 100644
        :auth_source_id => self.id
      }
    end
-@@ -206,7 +221,7 @@ class AuthSourceLdap < AuthSource
+@@ -206,12 +221,16 @@ class AuthSourceLdap < AuthSource
    # include the user attributes if on-the-fly registration is enabled
    def search_attributes
      if onthefly_register?
 -      ['dn', self.attr_firstname, self.attr_lastname, self.attr_mail]
-+      ['dn', self.attr_firstname, self.attr_lastname, self.attr_mail, 'userPrincipalName', 'displayName']
++      search_attributes_all
      else
        ['dn']
      end
+   end
+ 
++  def search_attributes_all
++    ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail, 'userPrincipalName', 'displayName']
++  end
++
+   # Check if a DN (user record) authenticates with the password
+   def authenticate_dn(dn, password)
+     if dn.present? && password.present?
+@@ -231,7 +250,7 @@ class AuthSourceLdap < AuthSource
+     search_filter = base_filter & Net::LDAP::Filter.eq(self.attr_login, login)
+     ldap_con.search( :base => self.base_dn,
+                      :filter => search_filter,
+-                     :attributes=> search_attributes) do |entry|
++                     :attributes => search_attributes) do |entry|
+       if onthefly_register?
+         attrs = get_user_attributes_from_ldap_entry(entry)
+       else
 -- 
 2.30.2
 
