@@ -152,7 +152,7 @@ docker run \
 > 
 > Please allow a minute or two for the Redmine application to start
 
-* Point your browser to `http://localhost:8080` and login using the default username and password:
+* Point your browser to `http://localhost:${PORT:-8080}` and login using the default username and password:
   * username: `admin`
   * password: `admin`
 * Make sure you visit the `Administration` link and `Load the default configuration` before creating any projects
