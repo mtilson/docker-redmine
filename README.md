@@ -975,14 +975,14 @@ docker exec -it redmine bash
 
 # Development
 
-## Upgrading to next redmine release
+## Upgrading to next `redmine` release
 
-> Example is for upgrading from 5.0.0 to 5.0.1
+> Example is for upgrading from `4.0.0` to `4.0.1`
 
 * Run the following commands
 
 ```bash
-sed -i 's/5.0.0/5.0.1/g' VERSION README.md
+sed -i 's/4.0.0/4.0.1/g' VERSION README.md Dockerfile
 vim Changelog.md # Update change log
 git add .
 git commit -m "release: $(cat VERSION)"
@@ -992,11 +992,33 @@ git push origin --tags
 ```
 
 * Open [mtilson/docker-redmine/releases](https://github.com/mtilson/docker-redmine/releases) and 'Draft a new release'
-* Select tag '5.0.1' and set release title to '5.0.1'
+* Select tag `4.0.1` and set release title to `4.0.1`
 * 'Publish release'
-* Check [quay](https://quay.io/repository/mtilson/redmine?tab=info) and [docker hub](https://hub.docker.com/r/mtilson/redmine/builds) for build progress
+* Check [Quay](https://quay.io/repository/mtilson/redmine?tab=info) and [Docker Hub](https://hub.docker.com/r/mtilson/redmine/builds) for build progress
+
+## Updating `docker-redmine` release
+
+> Example is for updating from `4.0.1` to `4.0.1-1`
+
+* Run the following commands
+
+```bash
+sed -i 's/4.0.1/4.0.1-1/g' VERSION README.md
+vim Changelog.md # Update change log
+git add .
+git commit -m "release: $(cat VERSION)"
+git tag -a -m "$(cat VERSION)" $(cat VERSION)
+git push
+git push origin --tags
+```
+
+* Open [mtilson/docker-redmine/releases](https://github.com/mtilson/docker-redmine/releases) and 'Draft a new release'
+* Select tag `4.0.1-1` and set release title to `4.0.1-1`
+* 'Publish release'
+* Check [Quay](https://quay.io/repository/mtilson/redmine?tab=info) and [Docker Hub](https://hub.docker.com/r/mtilson/redmine/builds) for build progress
 
 # References
-    * http://www.redmine.org/
-    * http://www.redmine.org/projects/redmine/wiki/Guide
-    * http://www.redmine.org/projects/redmine/wiki/RedmineInstall
+
+* http://www.redmine.org/
+* http://www.redmine.org/projects/redmine/wiki/Guide
+* http://www.redmine.org/projects/redmine/wiki/RedmineInstall
