@@ -13,7 +13,8 @@ services:
 
   redmine:
     build: ./
-    image: sameersbn/redmine:4.2.3-2
+    # use latest for test scenarios
+    image: mtilson/redmine:latest
     depends_on:
     - database
     environment:
