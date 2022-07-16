@@ -1,17 +1,36 @@
-From b386020709a851663b1da296ab9aa3566e64a36b Mon Sep 17 00:00:00 2001
+From d959c0cf6e19bc537007954de48884a88adc750f Mon Sep 17 00:00:00 2001
 From: mtilson <m@tilson.biz>
-Date: Fri, 15 Jul 2022 09:36:15 -0500
+Date: Sat, 16 Jul 2022 00:45:11 -0500
 Subject: [PATCH] default LDAP attributes
 
 ---
- app/models/auth_source_ldap.rb | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
+ app/models/auth_source_ldap.rb | 68 +++++++++++++++++++++++++++++++---
+ 1 file changed, 62 insertions(+), 6 deletions(-)
 
 diff --git a/app/models/auth_source_ldap.rb b/app/models/auth_source_ldap.rb
-index 5c87686..9e2cf01 100644
+index 5c87686..58d34f2 100644
 --- a/app/models/auth_source_ldap.rb
 +++ b/app/models/auth_source_ldap.rb
-@@ -99,7 +99,7 @@ class AuthSourceLdap < AuthSource
+@@ -47,6 +47,18 @@ class AuthSourceLdap < AuthSource
+     :ldaps_verify_peer
+   ]
+ 
++  cattr_accessor :use_display_name
++  @@use_display_name = Redmine::Configuration['ldap_onthefly_use_display_name'] || ''
++  # self.class.use_display_name
++
++  cattr_accessor :mail_default_attr
++  @@mail_default_attr = Redmine::Configuration['ldap_onthefly_mail_default_attr'] || ''
++  # self.class.mail_default_attr
++
++  cattr_accessor :mail_domain_suffix
++  @@mail_domain_suffix = Redmine::Configuration['ldap_onthefly_mail_domain_suffix'] || ''
++  # self.class.mail_domain_suffix
++
+   def initialize(attributes=nil, *args)
+     super
+     self.port = 389 if self.port == 0
+@@ -99,7 +111,7 @@ class AuthSourceLdap < AuthSource
      ldap_con = initialize_ldap_con(self.account, self.account_password)
      ldap_con.search(:base => self.base_dn,
                      :filter => search_filter,
@@ -20,24 +39,43 @@ index 5c87686..9e2cf01 100644
                      :size => 10) do |entry|
        attrs = get_user_attributes_from_ldap_entry(entry)
        attrs[:login] = AuthSourceLdap.get_attr(entry, self.attr_login)
-@@ -193,11 +193,26 @@ class AuthSourceLdap < AuthSource
+@@ -193,11 +205,45 @@ class AuthSourceLdap < AuthSource
    end
  
    def get_user_attributes_from_ldap_entry(entry)
-+    mail = AuthSourceLdap.get_attr(entry, self.attr_mail)
-+    if mail.nil? || mail.empty?
-+      mail = AuthSourceLdap.get_attr(entry, 'userPrincipalName') + ".by"
-+    end
-+
 +    firstname = AuthSourceLdap.get_attr(entry, self.attr_firstname)
 +    if firstname.nil? || firstname.empty?
-+      firstname = AuthSourceLdap.get_attr(entry, 'displayName').split(' ')[0]
++      if self.class.use_display_name.present? && self.class.use_display_name == true
++        firstname = AuthSourceLdap.get_attr(entry, 'displayName').split(' ')[0]
++        logger.debug "Got firstname using LDAP search with 'displayName': '#{firstname}'" if logger && logger.debug?
++      end
 +    end
 +
 +    lastname = AuthSourceLdap.get_attr(entry, self.attr_lastname)
 +    if lastname.nil? || lastname.empty?
-+      lastname = AuthSourceLdap.get_attr(entry, 'displayName').split(' ')[1]
++      if self.class.use_display_name.present? && self.class.use_display_name == true
++        lastname = AuthSourceLdap.get_attr(entry, 'displayName').split(' ')[-1]
++        logger.debug "Got lastname using LDAP search with 'displayName': '#{lastname}'" if logger && logger.debug?
++      end
 +    end
++
++    mail = AuthSourceLdap.get_attr(entry, self.attr_mail)
++    logger.debug "Got mail address using LDAP search with '#{self.attr_mail}': '#{mail}'" if logger && logger.debug?
++
++    if mail.nil? || mail.empty?
++      if self.class.mail_default_attr.present? && !self.class.mail_default_attr.nil?
++        mail = AuthSourceLdap.get_attr(entry, self.class.mail_default_attr)
++        logger.debug "Got mail address using LDAP search with '#{self.class.mail_default_attr}': '#{mail}'" if logger && logger.debug?
++
++        unless mail =~ /\A\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+\z/i
++          if self.class.mail_domain_suffix.present? && !self.class.mail_domain_suffix.nil?
++            mail = mail.split('@')[0] + '@' + self.class.mail_domain_suffix
++            logger.debug "Use domain suffix '#{self.class.mail_domain_suffix}' to form mail address: '#{mail}'" if logger && logger.debug?
++          end
++        end
++      end
++    end
++    logger.debug "Final mail address is: '#{mail}'" if logger && logger.debug?
 +
      {
        :dn => entry.dn,
@@ -50,7 +88,7 @@ index 5c87686..9e2cf01 100644
        :auth_source_id => self.id
      }
    end
-@@ -206,12 +221,16 @@ class AuthSourceLdap < AuthSource
+@@ -206,12 +252,22 @@ class AuthSourceLdap < AuthSource
    # include the user attributes if on-the-fly registration is enabled
    def search_attributes
      if onthefly_register?
@@ -61,14 +99,20 @@ index 5c87686..9e2cf01 100644
      end
    end
  
++  # Return all necessary LDAP attributes
 +  def search_attributes_all
-+    ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail, 'userPrincipalName', 'displayName']
++    if self.class.mail_default_attr.present? && !self.class.mail_default_attr.nil?
++      logger.debug "Adding '#{self.class.mail_default_attr}' to a set of LDAP search attributes" if logger && logger.debug?
++      ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail, 'displayName', self.class.mail_default_attr.to_s.strip]
++    else
++      ['dn', self.attr_login, self.attr_firstname, self.attr_lastname, self.attr_mail, 'displayName']
++    end
 +  end
 +
    # Check if a DN (user record) authenticates with the password
    def authenticate_dn(dn, password)
      if dn.present? && password.present?
-@@ -231,7 +250,7 @@ class AuthSourceLdap < AuthSource
+@@ -231,7 +287,7 @@ class AuthSourceLdap < AuthSource
      search_filter = base_filter & Net::LDAP::Filter.eq(self.attr_login, login)
      ldap_con.search( :base => self.base_dn,
                       :filter => search_filter,
