@@ -1,5 +1,16 @@
 # Changelog
 
+**5.0.2-1**
+- Fix documentation on upgrading/updating `redmine` and `docker-redmine` releases
+- Fix Copyright
+- Fix documentation on using `latest` image tags for example snippets
+- Add a machinery for `REDMINE_LDAP_OTF_*` variables and corresponding documentation
+  - Patch for `redmine` source code
+  - Build and Runtime assets
+  - Documentation
+- Add `redmine` source code patching abilities with automatic patching for `${REDMINE_BUILD_ASSETS_DIR}/patches/*.patch` files
+- Parameterize example snippets with `${PORT}` variable, like: `--publish=${PORT:-8080}:80`
+
 **5.0.2**
 - redmine: upgrade to v5.0.2
 - Add debugging environment to init-user-db
