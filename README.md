@@ -57,7 +57,7 @@ Docker image for [Redmine](http://www.redmine.org/)
 
 ## Version
 
-* Current Version: **mtilson/redmine:5.0.2-1**
+* Current Version: **mtilson/redmine:5.0.3**
 
 # Quick Start
 
@@ -145,7 +145,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
   --publish=${PORT:-8080}:80 \
-  -d mtilson/redmine:5.0.2-1
+  -d mtilson/redmine:5.0.3
 ```
 
 > **NOTE**
@@ -177,7 +177,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine:/home/redmine/data \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
-  --rm -ti mtilson/redmine:5.0.2-1 app:backup:create
+  --rm -ti mtilson/redmine:5.0.3 app:backup:create
 
 mkdir -p ~/.backup && mv /srv/docker/redmine/redmine/backups/*_redmine_backup.tar ~/.backup
 ```
@@ -197,7 +197,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
   --publish=${PORT:-8080}:80 \
-  -d mtilson/redmine:5.0.2-1
+  -d mtilson/redmine:5.0.3
 ```
 
 ## Restore Redmine application data from backup
@@ -222,7 +222,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine:/home/redmine/data \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
-  --rm -ti mtilson/redmine:5.0.2-1 app:backup:restore BACKUP=$(basename ${backup_file})
+  --rm -ti mtilson/redmine:5.0.3 app:backup:restore BACKUP=$(basename ${backup_file})
 ```
 
 ### Start Redmine application container
@@ -240,7 +240,7 @@ docker run \
   --volume=/srv/docker/redmine/redmine-logs:/var/log/redmine/ \
   --link=pg4redmine:postgresql \
   --publish=${PORT:-8080}:80 \
-  -d mtilson/redmine:5.0.2-1
+  -d mtilson/redmine:5.0.3
 ```
 
 # Configuration

@@ -1,5 +1,9 @@
 # Changelog
 
+**5.0.3**
+- redmine: upgrade to v5.0.3
+- Update base image to ubuntu:focal-20220826
+
 **5.0.2-1**
 - Fix documentation on upgrading/updating `redmine` and `docker-redmine` releases
 - Fix Copyright
